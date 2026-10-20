@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel de Saúde</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">+</span>
+      <div>
+        <h1 id="titulo">Painel de Indicadores de Saúde</h1>
+        <p class="subtitle" id="subtitulo">Carregando dados…</p>
+      </div>
+    </div>
+    <div class="controls">
+      <label for="regiao" class="sr-only">Região</label>
+      <select id="regiao" aria-label="Filtrar por região">
+        <option value="todas">Brasil (todas as regiões)</option>
+      </select>
+      <button id="tema" class="icon-btn" type="button" aria-label="Alternar tema claro/escuro">◐</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="erro" class="erro" hidden></div>
+
+    <section class="carousel" id="carrossel" aria-roledescription="carrossel" aria-label="Destaques do painel" tabindex="0">
+      <div class="carousel-viewport" id="car-viewport">
+        <div class="carousel-track" id="car-track" aria-live="off"></div>
+      </div>
+      <div class="carousel-footer">
+        <div class="carousel-dots" id="car-dots" role="group" aria-label="Escolher destaque"></div>
+        <div class="carousel-buttons">
+          <button class="icon-btn" id="car-prev" type="button" aria-label="Destaque anterior">‹</button>
+          <button class="icon-btn" id="car-play" type="button" aria-label="Pausar apresentação">❚❚</button>
+          <button class="icon-btn" id="car-next" type="button" aria-label="Próximo destaque">›</button>
+        </div>
+      </div>
+      <div class="carousel-progress" aria-hidden="true"><span id="car-progress"></span></div>
+    </section>
+
+    <section class="kpis" aria-label="Indicadores principais">
+      <article class="kpi">
+        <span class="kpi-label">Atendimentos</span>
+        <strong class="kpi-value" id="kpi-atendimentos">—</strong>
+        <span class="kpi-note">total no ano</span>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Internações</span>
+        <strong class="kpi-value" id="kpi-internacoes">—</strong>
+        <span class="kpi-note" id="kpi-taxa">—</span>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Casos de dengue</span>
+        <strong class="kpi-value" id="kpi-dengue">—</strong>
+        <span class="kpi-note" id="kpi-incidencia">—</span>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Ocupação de UTI</span>
+        <strong class="kpi-value" id="kpi-uti">—</strong>
+        <div class="bar"><span id="kpi-uti-bar"></span></div>
+      </article>
+      <article class="kpi">
+        <span class="kpi-label">Cobertura vacinal média</span>
+        <strong class="kpi-value" id="kpi-vacina">—</strong>
+        <span class="kpi-note" id="kpi-meta">—</span>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card span-2">
+        <header class="card-head">
+          <h2>Atendimentos e internações por mês</h2>
+          <p>Volume mensal ao longo do ano</p>
+        </header>
+        <div class="chart-box"><canvas id="chartMensal"></canvas></div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h2>Internações por faixa etária</h2>
+          <p>Distribuição percentual</p>
+        </header>
+        <div class="chart-box"><canvas id="chartFaixa"></canvas></div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h2>Sazonalidade da dengue</h2>
+          <p>Casos notificados por mês</p>
+        </header>
+        <div class="chart-box"><canvas id="chartDengue"></canvas></div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h2>Cobertura vacinal</h2>
+          <p>% da população-alvo vs. meta</p>
+        </header>
+        <div class="chart-box"><canvas id="chartVacina"></canvas></div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h2>Incidência de dengue por região</h2>
+          <p>Casos por 100 mil habitantes</p>
+        </header>
+        <div class="chart-box"><canvas id="chartRegioes"></canvas></div>
+      </article>
+
+      <article class="card span-3">
+        <header class="card-head">
+          <h2>Resumo por região</h2>
+          <p>Clique no cabeçalho de uma coluna para ordenar</p>
+        </header>
+        <div class="table-wrap">
+          <table id="tabela">
+            <thead>
+              <tr>
+                <th data-key="nome">Região</th>
+                <th data-key="populacao" class="num">População</th>
+                <th data-key="atendimentos" class="num">Atendimentos</th>
+                <th data-key="internacoes" class="num">Internações</th>
+                <th data-key="taxa" class="num">Taxa intern.</th>
+                <th data-key="incidencia" class="num">Dengue /100 mil</th>
+                <th data-key="uti" class="num">UTI</th>
+                <th data-key="vacina" class="num">Vacinação</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p id="fonte">—</p>
+  </footer>
+</body>
+</html>
